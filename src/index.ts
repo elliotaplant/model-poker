@@ -272,7 +272,11 @@ async function callModel(
   });
 
   console.log("Model response:");
-  console.log(response.content);
+  response.content.forEach((block) =>
+    block.type === "text"
+      ? console.log(block.text)
+      : console.log(block.name, block.input)
+  );
 
   const toolUseBlock = response.content.find(
     (block) => block.type === "tool_use" && block.name === "take_action"
