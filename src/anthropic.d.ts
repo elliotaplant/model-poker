@@ -1,4 +1,5 @@
-declare module '@anthropic-ai/sdk/resources/messages' {
+// Written manually, but should be pulled from package
+declare module "@anthropic-ai/sdk/resources/messages" {
   export interface ContentBlock {
     type: string;
     [key: string]: any;
@@ -15,7 +16,7 @@ declare module '@anthropic-ai/sdk/resources/messages' {
     type: string;
     [key: string]: any;
   }
-  
+
   export interface TextCitation {
     [key: string]: any;
   }

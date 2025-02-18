@@ -1,7 +1,4 @@
-# General advice 
-  Play conservatively. Bluff if this number is greater than 90: {{randomNumber}}
-
-# Current hole cards:
+Your cards:
 {{#each currentHand.holeCards}}
   {{this.rank}} {{this.suit}}
 {{/each}}
@@ -37,16 +34,5 @@ Players:
   Bet Size: {{this.betSize}}
 {{/each}}
 
-# How to play 
-Select an action from "Legal actions" and, if applicable, a bet
-size. Format your response as:
-
-<action betSize="betSize">actionName</action>
-
-Examples:
-
-<action>fold</action>
-<action>check</action>
-<action>call</action>
-<action betSize="123">bet</action>
-<action betSize="456">raise</action>
+Play conservatively. Bluff if this number is greater than 50: {{randomNumber}}
+Please think of a plan, and then take the appropriate action.

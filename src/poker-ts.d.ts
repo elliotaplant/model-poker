@@ -1,4 +1,5 @@
-declare module 'poker-ts/dist/facade/poker' {
+// Written manually, but should be pulled from package
+declare module "poker-ts/dist/facade/poker" {
   export interface Card {
     rank: string;
     suit: string;
@@ -27,15 +28,15 @@ declare module 'poker-ts/dist/facade/poker' {
   export default PokerTable;
 }
 
-declare module 'types/seat-index' {
+declare module "types/seat-index" {
   export type SeatIndex = number;
 }
 
-declare module 'types/chips' {
+declare module "types/chips" {
   export type Chips = number;
 }
 
-declare module 'types/hole-cards' {
-  import { Card } from 'poker-ts/dist/facade/poker';
+declare module "types/hole-cards" {
+  import { Card } from "poker-ts/dist/facade/poker";
   export type HoleCards = Card[];
 }

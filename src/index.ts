@@ -220,7 +220,7 @@ async function getModelAction(
     console.log("Calling model with prompt:");
     console.log(hydratedPrompt);
 
-    return await callModel(player.model, hydratedPrompt, table.legalActions());
+    return await callModel(player, hydratedPrompt, table.legalActions());
   } catch (error) {
     console.error(error);
     // Fall back to random action
@@ -232,47 +232,42 @@ async function getModelAction(
  * Helper function to call the Anthropic model
  */
 async function callModel(
-  modelName: string,
+  player: ModelPlayer,
   prompt: string,
   legalActions: LegalActions
 ): Promise<TakenAction> {
-  const response = await anthropic.messages.create({
-    model: modelName,
-    max_tokens: 2048,
-    temperature: 0.7,
-    tool_choice: {
-      name: "take_action",
-      type: "tool",
-    },
-    tools: [
-      {
-        name: "take_action",
-        description: "Take an action on the poker table",
-        input_schema: {
-          type: "object",
-          properties: {
-            action: {
-              type: "string",
-              enum: legalActions.actions,
-              description: "Action to take",
-            },
-            ...(legalActions.chipRange && {
-              betSize: {
-                type: "number",
-                minimum: legalActions.chipRange.min,
-                maximum: legalActions.chipRange.max,
-                description:
-                  'Amount to bet or raise. Required for "bet" and "raise" actions.',
-              },
-            }),
-            required: ["location"],
-          },
+  const actionTool: Anthropic.Messages.Tool = {
+    name: "take_action",
+    description: "Take an action on the poker table",
+    input_schema: {
+      type: "object",
+      properties: {
+        action: {
+          type: "string",
+          enum: legalActions.actions,
+          description: "Action to take",
         },
       },
-    ],
-    system: `You are an expert poker player making decisions in a Texas Hold'em game.
-Respond with a valid action based on the game state and your poker expertise.
-`,
+      required: ["action"],
+    },
+  };
+
+  if (legalActions.chipRange) {
+    (actionTool.input_schema.properties as Record<string, any>).betSize = {
+      type: "number",
+      minimum: legalActions.chipRange.min,
+      maximum: legalActions.chipRange.max,
+      description:
+        'Amount to bet or raise. Required for "bet" and "raise" actions.',
+    };
+  }
+
+  const response = await anthropic.messages.create({
+    model: player.model,
+    max_tokens: 2048,
+    temperature: 0.7,
+    tools: [actionTool],
+    system: `You are ${player.name}, an expert poker player making decisions in a Texas Hold'em game.`,
     messages: [{ role: "user", content: prompt }],
   });
 
@@ -296,8 +291,9 @@ Respond with a valid action based on the game state and your poker expertise.
       ]),
       betSize: z
         .number()
-        .min(legalActions.chipRange?.min)
-        .max(legalActions.chipRange?.max),
+        .min(legalActions.chipRange.min)
+        .max(legalActions.chipRange.max)
+        .optional(),
     });
     return takenActionSchema.parse(toolUseBlock.input);
   } else {
