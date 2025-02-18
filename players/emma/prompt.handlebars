@@ -1,0 +1,52 @@
+# General advice 
+  Play conservatively. Bluff if this number is greater than 90: {{randomNumber}}
+
+# Current hole cards:
+{{#each currentHand.holeCards}}
+  {{this.rank}} {{this.suit}}
+{{/each}}
+
+Current community cards:
+{{#each currentHand.communityCard}}
+  {{this.rank}} {{this.suit}}
+{{else}}
+  No cards on the table.
+{{/each}}
+
+Current pots:
+{{#each currentHand.pots}}
+  Size: {{this.size}}
+  Eligible Players: {{join this.eligiblePlayers}}
+{{else}}
+  No pot on the table.
+{{/each}}
+
+Legal actions:
+  {{join currentHand.legalActions.actions}}
+{{#if currentHand.legalActions.chipRange}}
+  Min bet: {{currentHand.legalActions.chipRange.min}}
+  Max bet: {{currentHand.legalActions.chipRange.max}}
+{{/if}}
+
+Players:
+{{#each game.playerStacks}}
+  Name: {{this.name}}
+  Status: {{this.status}}
+  Total Chips: {{this.totalChips}}
+  Stack: {{this.stack}}
+  Bet Size: {{this.betSize}}
+{{/each}}
+
+# How to play 
+Select an action from "Legal actions" and, if applicable, a bet
+size. Format your response as:
+
+<action betSize="betSize">actionName</action>
+
+Examples:
+
+<action>fold</action>
+<action>check</action>
+<action>call</action>
+<action betSize="123">bet</action>
+<action betSize="456">raise</action>
